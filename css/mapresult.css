@@ -1,0 +1,51 @@
+html,
+body,
+#main-wrapper {height:100%;}
+
+#map-canvas-wrapper {
+	height: 50%;
+}
+
+#map-canvas {
+	height: 100%;
+}
+
+#list-view-wrapper {
+	height: 50%;
+	overflow-y: scroll;
+}
+
+#list-view-wrapper .media {
+	border-bottom: 1px solid #eee;
+	margin: 0px;
+	padding: 15px 8px 8px;	
+}
+#list-view-wrapper .media.active {
+	background-color: #dff0d8;
+}
+
+#list-view-wrapper .media-position {
+	font-size: 0.6rem;
+}
+
+#list-view-wrapper .media:first-child {
+	padding-top: 16px;
+}
+
+#list-view-wrapper .input-group {
+	padding: 8px;
+}
+
+@media screen and (min-width: 768px) {
+	
+	#main-wrapper {
+		display: flex;
+	}
+	
+	#map-canvas-wrapper ,
+	#list-view-wrapper {
+		width: 50%;
+		height: 100%;
+	}
+}
+
