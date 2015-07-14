@@ -29,10 +29,31 @@
 			
 			<div id="list-view-wrapper">				
 				<div class="input-group hidden">
-			          <input type="text" id="text-keyword" class="form-control" placeholder="検索キーワードを入れてください...">
-			          <span class="input-group-btn">
-			            <button class="btn btn-default" id="btn-submit" type="button">検索</button>
-			          </span>
+<!--
+					<div class="nav-tab-area">
+						<ul class="nav nav-tabs nav-justified">
+							<li role="presentation" class="active"><a href="#">リスト表示</a></li>
+							<li role="presentation"><a href="#">リスト検索</a></li>
+						</ul>
+					</div>
+-->
+					
+					<div class="search-form-group">
+				        <input type="text" id="text-keyword" class="form-control" placeholder="検索キーワードを入れてください...">
+					</div>
+			          
+			          <div class="input-group-btn">
+				        <button type="button" id="btn-submit" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">検索 <span class="caret"></span></button>
+				        <ul class="dropdown-menu dropdown-menu-right">
+				          <li id="btn-search-title"><a href="#">タイトルから検索</a></li>
+				          <li id="btn-search-name"><a href="#">投稿者名から検索</a></li>
+				          <li id="btn-search-category"><a href="#">カテゴリーから検索</a></li>
+				          <li id="btn-search-all"><a href="#">全体検索</a></li>
+				          <li role="separator" class="divider"></li>
+				          <li id="btn-show-all"><a href="#">すべて表示</a></li>
+				        </ul>
+				      </div><!-- /btn-group -->
+      
 					</form>
 		        </div>
 			</div>

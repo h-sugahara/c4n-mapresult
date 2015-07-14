@@ -1,20 +1,24 @@
 //サーバー
 const SERVER_DIR_IMG = "http://mkbtm.net/geo_mapping/images/";
+const SERVER_FILE_CSV = "http://mkbtm.net/geo_mapping/data/data.txt"
 const API_FILE_GET = "http://pluscreative.sakura.ne.jp/suga/mapresult/fileget.php";
 
 //CSVの参照用
 const CSV_KEY_LAT 		= 0;
 const CSV_KEY_LNG 		= 1;
 const CSV_KEY_TITLE 	= 2;
-const CSV_KEY_COMMENT 	= 3;
-const CSV_KEY_IMG 		= 4;
+const CSV_KEY_NAME	 	= 3;
+const CSV_KEY_COMMENT 	= 4;
+const CSV_KEY_IMG 		= 5;
+const CSV_KEY_CATEGORY	= 6;
 
-/* csvデータパターン
+/* csvデータパターン 20150714
 37.916265614681265,
 139.08462707162533,
-テスト1,
+テスト1,名前,
 これもテストでコメントを入れています。,
-2015-07-09-110306.jpg
+2015-07-09-110306.jpg,
+カテゴリー
 */
 		
 
@@ -111,7 +115,7 @@ $(function(){
 		  type: "POST",
 		  url: API_FILE_GET,
 		  dataType: "text",
-		  data: { url: "http://mkbtm.net/geo_mapping/data/data.txt" },
+		  data: { url: SERVER_FILE_CSV },
 		  global: false,
 		})
 		.done(function(data) {
@@ -124,11 +128,11 @@ $(function(){
 		})
 		.fail(function() {
 			//通信エラー
+			alert("通信に失敗しました。再読み込みをお試し下さい。")
 		})
 		.always(function() {
 			//処理完了
 		});
-		
     }
     
     /*
@@ -199,7 +203,7 @@ $(function(){
 		$('#list-view-wrapper .input-group').removeClass("hidden");
 		
 		//マーカーを全部おいたら地図の拡大率設定
-		//map.fitBounds(bounds);
+		map.fitBounds(bounds);
 		
 	}
 	
@@ -210,7 +214,7 @@ $(function(){
 		
 		var imgURL  = SERVER_DIR_IMG + element[CSV_KEY_IMG];
 		
-		var media = '<div id="media-node-'+index+'"class="media" data-list-index="'+index+'"><div class="media-left media-middle"><a href="'+imgURL+'" target="_blank"><img src="'+imgURL+'" class="media-object"  style="width: 80px; height: 80px; alt="写真"></a></div><div class="media-body"><h4 class="media-heading">'+element[CSV_KEY_TITLE]+'</h4><p class="media-comment">'+element[CSV_KEY_COMMENT]+'</p><p class="media-position">'+element[CSV_KEY_LAT]+','+element[CSV_KEY_LNG]+'</p></div></div>';
+		var media = '<div id="media-node-'+index+'"class="media" data-list-index="'+index+'"><div class="media-left media-middle"><a href="'+imgURL+'" target="_blank"><img src="'+imgURL+'" class="media-object"  style="width: 80px; height: 80px; alt="写真"></a></div><div class="media-body"><h4 class="media-heading">'+element[CSV_KEY_TITLE]+'</h4><p class="media-comment">'+element[CSV_KEY_COMMENT]+'</p><p class="small">登録者: '+element[CSV_KEY_NAME]+'<br>カテゴリー: '+element[CSV_KEY_CATEGORY]+'</p><p class="media-position">'+element[CSV_KEY_LAT]+','+element[CSV_KEY_LNG]+'</p></div></div>';
 		
 		$(media).appendTo($('#list-view-wrapper')).click(function(event){
 			//タグからマーカーのindexを取得します
@@ -247,30 +251,62 @@ $(function(){
 	}
 	
 	
-	//ノード検索
-	$('#btn-submit').click(function(){
-		console.log($('#text-keyword').val());	
-		
-		var val = $('#text-keyword').val();
+	//
+	//検索フォーム
+	//
+	$('#btn-search-all').click(function(){ 		searchNode($(this).attr("id")); });
+	$('#btn-search-title').click(function(){ 	searchNode($(this).attr("id")); });
+	$('#btn-search-name').click(function(){ 	searchNode($(this).attr("id")); });
+	$('#btn-search-category').click(function(){ searchNode($(this).attr("id")); });
+	$('#btn-show-all').click(function(){		searchNode($(this).attr("id")); });
+	
+	function searchNode(searchCase){		
+		//検索キーワード取得
+		var keyword = $('#text-keyword').val();
 		
 		//配列から検索
-		makerDataAry.forEach(function(element, index, ary){
-			//配列に含まれてる？
-			var res = $.inArray(val, element);
+		makerDataAry.forEach(function(element, index, ary){	
 			
-			if(0 > res){
-				//keywordが含まれないノードは非表示
-				$("#media-node-"+index).addClass("hidden");
-			}else{
+			//ノードを表示するフラグ
+			var flg = false;
+			
+			//ケースによってサーチする範囲を設定
+			switch (searchCase){
+				case 'btn-search-title':
+					if(element[CSV_KEY_TITLE].indexOf(keyword) != -1){ flg = true; }
+					break;
+				case 'btn-search-name':
+					if(element[CSV_KEY_NAME].indexOf(keyword) != -1){ flg = true; }
+					break;
+				case 'btn-search-category':
+					if(element[CSV_KEY_CATEGORY].indexOf(keyword) != -1){ flg = true; }
+					break;
+				case 'btn-show-all':
+					flg = true;
+					break;
+				default:
+					//全部検索
+					element.forEach(function(txt, elementndex, ary){
+						if(txt.indexOf(keyword) != -1){
+							flg = true;
+						}
+					});
+					break;
+			}
+			
+			//ノードの表示・非表示
+			if(flg){
 				//keywordを含む場合表示
 				$("#media-node-"+index).removeClass("hidden");
+			}else{
+				//keywordが含まれないノードは非表示
+				$("#media-node-"+index).addClass("hidden");
 			}
 		});
-	});
+	}
 	
 	//textフィールドイベントチェック
 	$('#text-keyword').change(function() {
-		
 		//空だったら全部のノード表示
 		var val = $('#text-keyword').val();
 		if(!val || val==""){
