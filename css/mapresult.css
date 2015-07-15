@@ -1,7 +1,13 @@
 html,
-body,
-#main-wrapper {height:100%;}
+body {
+	height:100%;
+}
 
+#main-wrapper {
+	height:100%;
+	display: flex;
+	flex-direction: column;
+}
 #map-canvas-wrapper {
 	height: 50%;
 }
@@ -14,6 +20,7 @@ body,
 	height: 50%;
 	overflow-y: scroll;
 	padding: 8px;
+	-webkit-overflow-scrolling: touch
 }
 
 #list-view-wrapper .media {
@@ -62,13 +69,13 @@ body,
 @media screen and (min-width: 768px) {
 	
 	#main-wrapper {
-		display: flex;
+		flex-direction: row;
 	}
 	
 	#map-canvas-wrapper ,
 	#map-menu-wrapper {
+		height: 100% !important; 
 		width: 50%;
-		height: 100%;
 	}
 }
 

@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1 ,user-scalable=no">
     
-    <title>検索結果のページ</title>
+    <title>マッピングパーティー結果ページ</title>
     
 	<!-- Bootstrap Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -16,12 +16,6 @@
 	<body>
 	    
 	    <div id="main-wrapper">
-		    
-		    <div class="alert alert-danger hidden" role="alert">
-			  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-			  <span class="sr-only">Error:</span>
-			  Enter a valid email address
-			</div>
 
 		    <div id="map-canvas-wrapper">
 				<div id="map-canvas" ></div>
@@ -36,6 +30,11 @@
 				</div>
 				
 				<div id="search-view-wrapper" class="hidden">
+					
+					<div id="non-item-alert" class="alert alert-warning alert-dismissible" style="display: none" role="alert">
+					  <strong>検索結果: 0件</strong>
+					</div>
+
 					<form class="form-horizontal">
 						<div class="form-parts">
 						    <label for="inputTitle" class="control-label">タイトル検索</label>

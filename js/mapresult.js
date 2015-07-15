@@ -3,6 +3,9 @@ const SERVER_DIR_IMG = "http://mkbtm.net/geo_mapping/images/";
 const SERVER_FILE_CSV = "http://mkbtm.net/geo_mapping/data/data.txt"
 const API_FILE_GET = "http://pluscreative.sakura.ne.jp/suga/mapresult/fileget.php";
 
+//定数
+const SEARCH_UNSELECTED =  "未選択";
+
 //CSVの参照用
 const CSV_KEY_LAT 		= 0;
 const CSV_KEY_LNG 		= 1;
@@ -170,10 +173,10 @@ $(function(){
 				showInfoWindow(markers[index]);		
 				//リストビューで該当のノードを表示します	
 				var mp = $("#media-node-"+index).position() ;
-				var lt = $("#list-view-wrapper").scrollTop();
-				var lp = $("#list-view-wrapper").position();
+				var lt = $("#map-menu-wrapper").scrollTop();
+				var lp = $("#map-menu-wrapper").position();
 				var pos = mp.top + lt - lp.top;
-				$("#list-view-wrapper").animate({scrollTop: pos},"slow", "swing");
+				$("#map-menu-wrapper").animate({scrollTop: pos},"slow", "swing");
 				//ノードをアクティブ表示
 				$('.media').removeClass("active");
 				$("#media-node-"+index).addClass("active");				
@@ -267,6 +270,57 @@ $(function(){
 	/*
 		検索フォーム
 	*/
+	$('#btn-submit').click(function(){
+		//バウンスを指定するために保持します
+		var bounds = new google.maps.LatLngBounds();
+		//タイトル検索用のキーワード
+		var keyTitle = $('#text-keyword').val();
+		//投稿者検索用のキーワード
+		var keyAuthor = $('#select-search-author option:selected').val();
+		//カテゴリー検索用のキーワード
+		var keyCategory = $('#select-search-category option:selected').val();
+		//条件にヒットしたフラグ
+		var hit = false;
+		
+		//マーカーの配列から検索
+		makerDataAry.forEach(function(element, index, ary){	
+			///検索条件で絞込
+			var flg;
+			flg = (element[CSV_KEY_TITLE].indexOf(keyTitle) != -1 || keyTitle == "")						?  true : false; 
+			flg = (flg && (element[CSV_KEY_AUTHOR] == keyAuthor || keyAuthor == SEARCH_UNSELECTED)) 		?  true : false; 
+			flg = (flg && (element[CSV_KEY_CATEGORY] == keyCategory || keyCategory == SEARCH_UNSELECTED)) 	?  true : false; 
+			
+			//ノードの表示・非表示
+			if(flg){
+				//keywordを含む場合表示
+				$("#media-node-"+index).removeClass("hidden");
+				markers[index].setOptions({visible:true});
+				
+				//位置情報を保持
+				bounds.extend(markers[index].getPosition());
+				//ヒットフラグ
+				hit = true;
+			}else{
+				//keywordが含まれないノード・マーカーは非表示
+				$("#media-node-"+index).addClass("hidden");
+				markers[index].setOptions({visible:false});
+			}
+		});
+		
+		//一件以上ヒットしたら
+		if(hit){
+			//リストビュータブをアクティブ
+			activeTabView('tab-view'); 
+		
+			//地図の拡大率設定
+			map.fitBounds(bounds);
+		}else{
+			//Warning表示
+			$('#non-item-alert').slideDown().delay(2000).slideUp();
+		}
+	});
+/*
+	
 	$('#btn-search-all').click(function(){ 			searchNode($(this).attr("id"), $('#text-keyword').val()); });
 	$('#btn-search-title').click(function(){ 		searchNode($(this).attr("id"), $('#text-keyword').val()); });
 	$('#select-search-author').change(function(){ 	searchNode($(this).attr("id"), $('#select-search-author option:selected').val()); });
@@ -334,6 +388,7 @@ $(function(){
 		//地図の拡大率設定
 		map.fitBounds(bounds);
 	}
+*/
 	
 	//textフィールドイベントチェック
 /*
@@ -365,6 +420,19 @@ $(function(){
 			$('#list-view-wrapper').addClass("hidden");
 			$('#search-view-wrapper').removeClass("hidden");
 		}
+		
+		changeViewHeight(type);
+	}
+	
+	//ビューの高さ変更
+	function changeViewHeight(type){
+		if(type == "tab-view"){
+			$("#map-canvas-wrapper").animate({ height: "50%"}, 500 );
+			$("#map-menu-wrapper").animate({ height: "50%"}, 500 );
+		}else{
+			$("#map-canvas-wrapper").animate({  height: "30%" }, 500 );
+			$("#map-menu-wrapper").animate({ height: "70%"}, 500 );
+		}		
 	}
 	
 	
