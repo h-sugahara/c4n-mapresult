@@ -10,9 +10,10 @@ body,
 	height: 100%;
 }
 
-#list-view-wrapper {
+#map-menu-wrapper {
 	height: 50%;
 	overflow-y: scroll;
+	padding: 8px;
 }
 
 #list-view-wrapper .media {
@@ -36,6 +37,28 @@ body,
 	padding: 8px;
 }
 
+#nav-tab-area {
+	padding: 8px
+}
+
+#list-author li,
+#list-category li,{
+	padding: 8px;
+}
+
+#search-view-wrapper label{
+	font-size: 1.2rem;
+	font-weight: bold;
+}
+
+#search-view-wrapper .form-parts{
+	margin: 8px 0;	
+}
+
+#search-view-wrapper #btn-submit{
+	margin-top: 16px;
+}
+
 @media screen and (min-width: 768px) {
 	
 	#main-wrapper {
@@ -43,7 +66,7 @@ body,
 	}
 	
 	#map-canvas-wrapper ,
-	#list-view-wrapper {
+	#map-menu-wrapper {
 		width: 50%;
 		height: 100%;
 	}

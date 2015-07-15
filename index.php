@@ -27,35 +27,43 @@
 				<div id="map-canvas" ></div>
 			</div>
 			
-			<div id="list-view-wrapper">				
-				<div class="input-group hidden">
-<!--
-					<div class="nav-tab-area">
-						<ul class="nav nav-tabs nav-justified">
-							<li role="presentation" class="active"><a href="#">リスト表示</a></li>
-							<li role="presentation"><a href="#">リスト検索</a></li>
-						</ul>
-					</div>
--->
-					
-					<div class="search-form-group">
-				        <input type="text" id="text-keyword" class="form-control" placeholder="検索キーワードを入れてください...">
-					</div>
-			          
-			          <div class="input-group-btn">
-				        <button type="button" id="btn-submit" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">検索 <span class="caret"></span></button>
-				        <ul class="dropdown-menu dropdown-menu-right">
-				          <li id="btn-search-title"><a href="#">タイトルから検索</a></li>
-				          <li id="btn-search-name"><a href="#">投稿者名から検索</a></li>
-				          <li id="btn-search-category"><a href="#">カテゴリーから検索</a></li>
-				          <li id="btn-search-all"><a href="#">全体検索</a></li>
-				          <li role="separator" class="divider"></li>
-				          <li id="btn-show-all"><a href="#">すべて表示</a></li>
-				        </ul>
-				      </div><!-- /btn-group -->
-      
+			<div id="map-menu-wrapper">
+				<div id="nav-tab-area">
+					<ul class="nav nav-tabs">
+						<li id="tab-view" role="presentation" class="active"><a href="#">リスト表示</a></li>
+						<li id="tab-search" role="presentation"><a href="#">リスト検索</a></li>
+					</ul>
+				</div>
+				
+				<div id="search-view-wrapper" class="hidden">
+					<form class="form-horizontal">
+						<div class="form-parts">
+						    <label for="inputTitle" class="control-label">タイトル検索</label>
+						    <input id="text-keyword" type="text" class="form-control" placeholder="キーワードを入力してください...">
+						</div>
+						
+						<div class="form-parts">
+						    <label for="inputAuthor" class="control-label">投稿者検索</label>
+						    <select id="select-search-author" class="form-control">
+								<option value="未選択">未選択</option>
+							</select>
+						</div>						
+						
+						<div class="form-parts">
+						    <label for="inputCategory" class="control-label">カテゴリー検索</label>							
+					    	<select id="select-search-category" class="form-control">
+								<option value="未選択">未選択</option>
+							</select>
+						</div>
+						
+						<div class="form-parts">
+<!-- 						<a id="btn-show-all" class="btn btn-default" href="#" role="button">すべて表示</a> -->
+							<button id="btn-submit" type="button" class="btn btn-default btn-lg btn-block">検索</button>
+						</div>
 					</form>
-		        </div>
+				</div>
+	
+				<div id="list-view-wrapper"></div>
 			</div>
 			
 	    </div><!-- id="main-wrapper" -->
