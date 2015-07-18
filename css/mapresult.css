@@ -5,11 +5,19 @@ body {
 
 #main-wrapper {
 	height:100%;
+	display:-webkit-box;/*--- Androidブラウザ用 ---*/
+    display:-ms-flexbox;/*--- IE10 ---*/
+    display: -webkit-flex;/*--- safari（PC）用 ---*/
 	display: flex;
+	-webkit-flex-direction:column;/*--- safari（PC）用 ---*/
 	flex-direction: column;
 }
+
 #map-canvas-wrapper {
 	height: 50%;
+}
+div.map-canvas {
+	overflow: visible;
 }
 
 #map-canvas {
@@ -34,6 +42,10 @@ body {
 
 #list-view-wrapper .media-position {
 	font-size: 0.6rem;
+}
+
+#list-view-wrapper .media-comment{
+	font-weight: bold;
 }
 
 #list-view-wrapper .media:first-child {
@@ -69,6 +81,7 @@ body {
 @media screen and (min-width: 768px) {
 	
 	#main-wrapper {
+		-webkit-flex-direction:row;/*--- safari（PC）用 ---*/
 		flex-direction: row;
 	}
 	
@@ -79,3 +92,13 @@ body {
 	}
 }
 
+#preloader {
+	position: absolute;
+	top:0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin:auto;
+	width:60px;
+	height: 64px;
+}

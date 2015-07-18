@@ -9,19 +9,15 @@ const SEARCH_UNSELECTED =  "未選択";
 //CSVの参照用
 const CSV_KEY_LAT 		= 0;
 const CSV_KEY_LNG 		= 1;
-const CSV_KEY_TITLE 	= 2;
-const CSV_KEY_AUTHOR	= 3;
-const CSV_KEY_COMMENT 	= 4;
-const CSV_KEY_IMG 		= 5;
+const CSV_KEY_DATE 		= 2;
+const CSV_KEY_TITLE 	= 3;
+const CSV_KEY_AUTHOR	= 4;
+const CSV_KEY_COMMENT 	= 5;
 const CSV_KEY_CATEGORY	= 6;
+const CSV_KEY_IMG 		= 7;
 
-/* csvデータパターン 20150714
-37.916265614681265,
-139.08462707162533,
-テスト1,名前,
-これもテストでコメントを入れています。,
-2015-07-09-110306.jpg,
-カテゴリー
+/* csvデータパターン 20150716
+緯度, 経度, 日時, タイトル, 登録者名, 説明, カテゴリー, 画像ファイル名
 */
 		
 
@@ -98,12 +94,10 @@ $(function(){
 	    //キャンパスの要素を取得します
 		var canvas = document.getElementById( "map-canvas" );
 		
-		//中心の位置座標を指定します
-		var latlng = new google.maps.LatLng( lat , lng );
-
+		//マップの表示オプションを設定します
 	    var mapOptions = {
-			zoom: 15 ,				//ズーム値
-			center: latlng, 		//中心座標 [latlng]
+			zoom: 15 ,	//ズーム値
+			center: new google.maps.LatLng( lat , lng ),  //中心座標 [latlng]
 		};
 
 	    map = new google.maps.Map( canvas , mapOptions );
@@ -128,6 +122,12 @@ $(function(){
 		.done(function(data) {
 			//csvを配列にして保持します
 			makerDataAry = $.csv.toArrays(data);
+			
+
+			//配列を投稿日が新しい順順にソートします
+			makerDataAry.sort(function(a,b) {
+				return (a[CSV_KEY_DATE] < b[CSV_KEY_DATE] ? 1 : -1);
+			});
 			
 			//マーカー	
 			makeMaker(makerDataAry);
@@ -217,10 +217,16 @@ $(function(){
 		});
 		
 		//マーカーを全部おいたら地図の拡大率設定
-		map.fitBounds(bounds);
+		//map.fitBounds(bounds);
+		map.panTo(markers[0].getPosition());
 		
 		//検索メニュー生成
 		makeSearchMenu();
+		
+		//loading消して、画面表示
+		$('#main-wrapper').delay(1000).removeClass('hidden');
+		$('#preloader').delay(1000).fadeOut('slow');
+		
 	}
 	
 	/*
@@ -230,7 +236,26 @@ $(function(){
 		
 		var imgURL  = SERVER_DIR_IMG + element[CSV_KEY_IMG];
 		
-		var media = '<div id="media-node-'+index+'"class="media" data-list-index="'+index+'"><div class="media-left media-middle"><a href="'+imgURL+'" target="_blank"><img src="'+imgURL+'" class="media-object"  style="width: 80px; height: 80px; alt="写真"></a></div><div class="media-body"><h4 class="media-heading">'+element[CSV_KEY_TITLE]+'</h4><p class="media-comment">'+element[CSV_KEY_COMMENT]+'</p><p class="small">登録者: '+element[CSV_KEY_AUTHOR]+'<br>カテゴリー: '+element[CSV_KEY_CATEGORY]+'</p><p class="media-position">'+element[CSV_KEY_LAT]+','+element[CSV_KEY_LNG]+'</p></div></div>';
+		//日付の整形
+		var m = moment(element[CSV_KEY_DATE],'YYYY:MM:DD:hh:mm:ss');
+		var preformattedDate = m.format('YYYY/MM/DD HH:mm:ss');
+		
+		
+		var media = '<div id="media-node-'+index+'"class="media" data-list-index="'+index+'">'
+						+'<div class="media-left media-middle">'
+							+'<a href="'+imgURL+'" target="_blank">'
+								+'<img src="'+imgURL+'" class="media-object"  style="max-width: 80px; height: auto; alt="写真">'
+							+'</a>'
+						+'</div>'
+						+'<div class="media-body">'
+							+'<h4 class="media-heading">'+element[CSV_KEY_TITLE]+'</h4>'
+							+'<p class="media-comment">'+element[CSV_KEY_COMMENT]+'</p>'
+							+'<p class="small">登録者: '+element[CSV_KEY_AUTHOR]+'<br>'
+							+'カテゴリー: '+element[CSV_KEY_CATEGORY]+'<br>'
+							+'投稿日: '+preformattedDate+'</p>'
+							+'<p class="media-position">緯度:'+element[CSV_KEY_LAT]+', 経度:'+element[CSV_KEY_LNG]+'</p>'
+						+'</div>'
+					+'</div>';
 		
 		$(media).appendTo($('#list-view-wrapper')).click(function(event){
 			//タグからマーカーのindexを取得します
@@ -242,7 +267,7 @@ $(function(){
 			//ピンのアニメーション
 			highlightMaker.setAnimation( google.maps.Animation.DROP ) ;						
 			//情報ウィンドウ表示
-			showInfoWindow(highlightMaker);	
+			showInfoWindow(highlightMaker, imgURL);	
 			//ノードをアクティブ表示
 			$('.media').removeClass("active");
 			$(event.currentTarget).addClass("active");
@@ -251,15 +276,18 @@ $(function(){
 	
 	
 	//情報ウィンドウ
-	function showInfoWindow(targetMaker){
+	function showInfoWindow(targetMaker, imgURL){
 		//既に表示していたらクローズ
 		if(infoWindow){
 			infoWindow.close();
 		}
 		
+		//var title = '<h4 style="text-align:center;">'+targetMaker.getTitle()+'</h4>';
+		//var img  = '<div><img src = "'+ imgURL +'" style="max-width: 80px; height: auto;"><div>';
+		
 		//情報ウィンドウ生成
 		infoWindow = new google.maps.InfoWindow({
-			content: targetMaker.getTitle() ,
+			content:  targetMaker.getTitle(),
 		});
 		
 		//表示
